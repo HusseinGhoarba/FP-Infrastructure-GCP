@@ -106,7 +106,7 @@ screenshot from the command:
 
 > 2- Push the created image by the following command to your container registry of your google cloud project after changing `<your-project-id>` with yours:
 ```
-docker push gcr.io/<your-project-id>/my-python-app:latest
+docker push gcr.io/<your-project-id>/jenkins-slave:latest
 ```
 screenshot from the command:
 
@@ -172,6 +172,7 @@ screenshot from the command:
 <img src="images/deploy-jenkins/08-get-services.png" width=400 >
 
 > 9- try to access the jenkins server:
+
 **1- get the `<External-IP>`:`<Port>` as follows:**
 
 <img src="images/deploy-jenkins/09-get-the-external-ip-port.png" width=400 >
@@ -181,6 +182,7 @@ screenshot from the command:
 <img src="images/deploy-jenkins/10-go-to-browser.png" width=400 >
 
 > 10-  After Opening it will ask for a the initial password which we will get from: 
+
 **10/1- get the name of the pod from the next command:**
 ```
 kubectl get po -n jenkins 
