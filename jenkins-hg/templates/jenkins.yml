@@ -2,31 +2,31 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: jenkins
+  namespace: jenkins
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: jenkins-server
-      namespace: jenkins
   template:
     metadata:
       labels:
         app: jenkins-server
     spec:
       securityContext:
-            fsGroup: 1000
-            runAsUser: 1000
+        fsGroup: 1000
+        runAsUser: 1000
       serviceAccountName: jenkins-admin
       containers:
         - name: jenkins
           image: jenkins/jenkins:lts
           resources:
             limits:
-              memory: "1Gi"
-              cpu: "1000m"
+              memory: '2Gi'
+              cpu: '1000m'
             requests:
-              memory: "250Mi"
-              cpu: "250m"
+              memory: '500Mi'
+              cpu: '500m'
           ports:
             - name: httpport
               containerPort: 8080
@@ -34,7 +34,7 @@ spec:
               containerPort: 50000
           livenessProbe:
             httpGet:
-              path: "/login"
+              path: '/login'
               port: 8080
             initialDelaySeconds: 90
             periodSeconds: 10
@@ -42,7 +42,7 @@ spec:
             failureThreshold: 5
           readinessProbe:
             httpGet:
-              path: "/login"
+              path: '/login'
               port: 8080
             initialDelaySeconds: 60
             periodSeconds: 10
@@ -54,4 +54,4 @@ spec:
       volumes:
         - name: jenkins-data
           persistentVolumeClaim:
-              claimName: jenkins-pv-claim
+            claimName: jenkins-pv-claim
