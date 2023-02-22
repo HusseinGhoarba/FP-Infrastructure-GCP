@@ -9,7 +9,7 @@ spec:
   claimRef:
     name: jenkins-pv-claim
   capacity:
-    storage: 10Gi
+    storage: 2Gi
   accessModes:
     - ReadWriteOnce
   local:
