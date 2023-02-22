@@ -161,48 +161,59 @@ helm install jenkins ./FP-Infrastructure-GCP/jenkins-hg/
 ```
 screenshot from the command:
 
-<img src="images/deploy-jenkins/07-pull-files-from-helm.png" width=400 >
+<img src="images/deploy-jenkins/07-install-jenkins-through-chart.png" width=400 >
 
 > 8- make sure that the service changed through the next command:
 ```
 kubectl get svc -n jenkins 
 ```
+screenshot from the command:
 
+<img src="images/deploy-jenkins/08-get-services.png" width=400 >
 
-kubectl exec --namespace jenkins -it svc/jenkins -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password && echo
+> 9- try to access the jenkins server:
+**1- get the `<External-IP>`:`<Port>` as follows:**
 
-#--------------------------------------------------------------------------------------------------------------------###################################################################
-> 4- change your current directory to GCP-Project:
+<img src="images/deploy-jenkins/09-get-the-external-ip-port.png" width=400 >
+
+**2- write it in any web-browser:**
+
+<img src="images/deploy-jenkins/10-go-to-browser.png" width=400 >
+
+> 10-  After Opening it will ask for a the initial password which we will get from: 
+**10/1- get the name of the pod from the next command:**
 ```
-cd GCP-Project/
-```
-> 5- deploy the resources into the python-cluster:
-```
-kubectl apply -f deployment/
+kubectl get po -n jenkins 
 ```
 screenshot from the command:
 
-<img src="images/deployment/04-create-deployment.png" width=400 >
+<img src="images/deploy-jenkins/11-get-po-name.png" width=400 >
 
-> 6- make sure that all pods are running and get services:
+**10/2- get the exec to the pod from the next command after changing the `<pod-name>` by what we get from the last command:**
 ```
-kubectl get po
-```
-screenshot from the command:
-
-<img src="images/deployment/05-get-pods.png" width=400 >
-
-```
-kubectl get svc
+kubectl exec --stdin --tty <pod-name> -n jenkins -- /bin/bash 
 ```
 screenshot from the command:
 
-<img src="images/deployment/06-get-svc.png" width=400 >
+<img src="images/deploy-jenkins/12-exec-to-the-pod.png" width=400 >
 
-> 7- from the previous step get the external of the IP as the next photo and the port and go to any web-browser and write `<external-ip>:<port>`:
-screenshot from the command:
+**10/3- Let's go to the path whci indicated in the server of the jenkins and show the file from the following command:**
 
-<img src="images/deployment/07-get-the-ip-of-load-balancer.png" width=400 >
+<img src="images/deploy-jenkins/13-initial-pass-path.png" width=400 >
+
+```
+cat /var/jenkins_home/secrets/initialAdminPassword
+```
+
+<img src="images/deploy-jenkins/14-Finally-get-the-initial-pass.png" width=400 >
+
+**10/4- Let's enter to the jenkins-server by copying the output password and add it into the server:**
+
+<img src="images/deploy-jenkins/15-add-password-and-start-with-server.png" width=400 >
+
+**10/5- then skip plugin installation and add your user-name and password then welcome to Jenkin**
+
+<img src="images/deploy-jenkins/16-Welcome-to-Jenkins-Server.png" width=400 >
 
 ### --------------------------------------------------
 ### Finally: 
