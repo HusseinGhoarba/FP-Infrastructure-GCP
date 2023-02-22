@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name:  jenkins-slave
-  namespace: devops-tools
+  namespace: jenkins
   labels:
     app:  jenkins-slave
 spec:
