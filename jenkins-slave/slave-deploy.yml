@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  jenkins-slave
+  namespace: devops-tools
+  labels:
+    app:  jenkins-slave
+spec:
+  selector:
+    matchLabels:
+      app: jenkins-slave
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  jenkins-slave
+    spec:
+      serviceAccount: jenkins-deployer
+      automountServiceAccountToken: true
+      securityContext:
+        fsGroup: 0
+        runAsUser: 0
+      containers:
+      - name:  jenkins-slave
+        image:  gcr.io/hussein-ghoraba/jenkins-slave
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 22
+          name:  jenkins-slave
+        volumeMounts:
+        - name: docker-sock
+          mountPath: /var/run/docker.sock
+      volumes:
+        - name: docker-sock
+          hostPath:
+            path: /var/run/docker.sock

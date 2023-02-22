@@ -29,6 +29,6 @@ module "GKE-Cluster" {
   location-of-node = var.user-zone
   count-of-node    = 1
   #----------------------------------------
-  machine-type-of-node = "e2-micro"
+  machine-type-of-node = "e2-medium"
   email-of-sa-for-node = module.GKE-SA.email
 }
