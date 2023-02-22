@@ -147,16 +147,7 @@ screenshot from the command:
 
 <img src="images/deploy-jenkins/04-connect-to-the-cluster.png" width=400 >
 
-> 5- add helm repo to the helm repo-list
-```
-helm repo add jenkins https://charts.jenkins.io
-```
-screenshot from the command:
-
-<img src="images/deploy-jenkins/05-add-repo-to-helm.png" width=400 >
-
-
-> 6- create namespace with name <jenkins> to add the jenkins deployment and services into it
+> 5- create namespace with name <jenkins> to add the jenkins deployment and services into it
 ```
 kubectl create ns jenkins
 ```
@@ -166,44 +157,16 @@ screenshot from the command:
 
 > 7- Let's install deployment jenkins using helm in the python-cluster in name-space jenkins
 ```
-helm pull jenkins/jenkins 
+helm install jenkins ./FP-Infrastructure-GCP/jenkins-hg/
 ```
 screenshot from the command:
 
 <img src="images/deploy-jenkins/07-pull-files-from-helm.png" width=400 >
 
-> 8- Edit the service from cluster-ip to load-balancer LoadBalancer
+> 8- make sure that the service changed through the next command:
 ```
-vi jenkins/values.yaml
+kubectl get svc -n jenkins 
 ```
-**go to line 129 and at the end of word `ClusterIP`**
-screenshot to show this:
-
-<img src="images/deploy-jenkins/08-show-line-service-type.png" width=400 >
-
-**Enter the Insert Mode with pressing `i` and change the `<ClusterIP>` to `<LoadBalancer>` then press `Esc` button then `:wq` from your keyboard:
-screenshot to show this:
-
-<img src="images/deploy-jenkins/09-changing-to-loadbalancer.png" width=400 >
-
-> 9- Let's install deployment jenkins using helm in the python-cluster in name-space jenkins
-```
-helm install jenkins ./jenkins -n jenkins
-```
-screenshot from the command:
-
-<img src="images/deploy-jenkins/10-install-jenkins.png" width=400 >
- 
-> 10- make sure that the service changed through the next command:
-```
-kubectl get svc -n jenkins
-``` 
-screenshot from the command:
-
-<img src="images/deploy-jenkins/11-check-svc.png" width=400 >
-
-> 11- make sure that the service changed through the next command:
-
 
 
 kubectl exec --namespace jenkins -it svc/jenkins -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password && echo
