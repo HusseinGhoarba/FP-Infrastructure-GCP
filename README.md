@@ -12,7 +12,7 @@
 
 **The next photo shows the required infrastructure that will be deployed and what is the project lifecycle:**
 
-<img src="images/Final-Project-brief.jpg" width=600 >
+<img src="images/Project-brief.jpg" width=600 >
 
 
 ###                ______________________________________________________________________________________________
@@ -386,7 +386,7 @@ curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 apt update && apt install -y google-cloud-sdk
 ```
 
->> 2-2 Switch to jenkins user and  follow the next steps to authenticate the gcloud within the user and then configure cluster with the user profile:
+>> 2-3 Switch to jenkins user and  follow the next steps to authenticate the gcloud within the user and then configure cluster with the user profile:
 ```
 su jenkins
 ```
@@ -414,7 +414,7 @@ get out of the slave-pod
 exit
 ```
 
-<img src="images/deploy-app/07-configure-the-python-cluster-to-user-jenkins-in-slave-pod" width=400 >
+<img src="images/deploy-app/07-configure-the-python-cluster-to-user-jenkins-in-slave-pod.png" width=400 >
 
 >> 2-2 add this command 	
 ```
