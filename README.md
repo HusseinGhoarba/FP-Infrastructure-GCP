@@ -506,6 +506,10 @@ kubectl get svc -n dev
 ### --------------------------------------------------
 ### Finally: 
 > **I want to THANK YOU & If there is any problem don't hesitate to send to me**
+
+#### Tools Used:
+<img src="./tools-used.jpg" width=600 >
+
 ### --------------------------------------------------
 ### Project Contributers:
 |![Hussein Ghoraba](images/hussein-ghoraba.jpeg)|
