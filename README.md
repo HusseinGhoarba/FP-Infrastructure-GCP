@@ -12,7 +12,7 @@
 
 **The next photo shows the required infrastructure that will be deployed and what is the project lifecycle:**
 
-<img src="images/Project-brief.jpg" width=600 >
+<img src="images/Final-Project-brief.jpg" width=600 >
 
 
 ###                ______________________________________________________________________________________________
@@ -356,6 +356,69 @@ chown jenkins:jenkins /var/run/docker.soc
 
 <img src="images/jk-slave/conf/08-Successfully-Launched-The-Agent.png" width=400 >
 
+### --------------------------------------------------
+### 5- Finally we are in the final step in which we will create `pipeline` which will auto `Build&Deploy` the code inside the application repo:
+> 1- Add credentials od the DockerHub into Jenkins server : 06-create-credentials-of-dockerHub
+
+>> 1-1 The same steps of creating credentials of jenkins-user but here you should add your username and password of dockerhub account:
+>>> go to `manage jenkins` - `manage credentials` - `global` then `+ Add new credentials` and choose `Username and password credentials` and fullfill the requires as i explained before 
+
+<img src="images/deploy-app/01-create-piepline.png" width=400 >
+
+> 2- Configure the pod to deploy pods in the cluster:
+
+>> 2-1 go to the terminal in which the VM-Instance is opened and get into the terminal of the jenkins-slave-pod:
+```
+su jenkins
+```
+>> 2-2 add this command 
+```
+gcloud container clusters get-credentials <your-cluster-name> --zone <your-entered-prefered-zone> --project <your-project-id>
+```
+
+> 3- Create an Item "Pipeline" from the jenkins server as follow:
+
+<img src="images/deploy-app/01-create-piepline.png" width=400 >
+
+<img src="images/deploy-app/02-create-piepline.png" width=400 >
+
+>> 3-1- in section `Description` ------`"Optional"`
+```
+A pipeline that will do the next jobs:
+- Build image from the code inside the remote repo (GitHub) 
+- Push the Image to the GCR
+- Deploy the image into the cluster through deployment and service to access the application (from-kubernetes-yml-files)
+```
+>> 3-2- in section `Pipeline`
+>>> 3-2-1- in section `Definition`:
+```
+Choose: Pipeline script from SCM
+```
+>>> 3-2-2- in section `SCM` 
+```
+Choose: Git
+```
+>>>> 3-2-2-1- in section `Repository URL`:
+```
+<Add link of your repository> -- for me i added this as this has the requirements of the project <https://github.com/HusseinGhoarba/FP-Application-GCP>
+```
+>>>> 3-2-2-1- in section `Branches to build`:
+```
+<add the name of the branch that has your application> -- in my case <./main>
+```
+>>> 3-2-3- in section `Script Path`
+```
+<add the name of your script file> but it's common to use the name of the script file as "Jenkinsfile" and that what i use.
+```
+>> Any other un-mentioned sections  let it as its' default case
+
+>> Last thing click on button `Save`
+
+<img src="images/deploy-app/03-pipeline-configurations.png" width=400 >
+
+<img src="images/deploy-app/04-pipeline-configurations.png" width=400 >
+
+<img src="images/deploy-app/05-pipeline-configurations.png" width=400 >
 
 ### --------------------------------------------------
 ### Finally: 
