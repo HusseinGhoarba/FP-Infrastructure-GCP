@@ -1,6 +1,7 @@
 resource "google_compute_network" "vpc_network" {
   name = var.name-of-vpc
   auto_create_subnetworks = var.checking-auto-create-subnets
+  routing_mode = "REGIONAL"
 }
 
 resource "google_compute_firewall" "IAP-firewall" {
@@ -13,4 +14,4 @@ resource "google_compute_firewall" "IAP-firewall" {
     protocol = var.protocol-allowed
     ports    = var.ports-allowed
   }
-}   
+} 

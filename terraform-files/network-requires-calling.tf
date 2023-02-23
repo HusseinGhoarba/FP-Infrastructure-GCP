@@ -10,7 +10,7 @@ module "my-vpc" {
   type-of-direction = "INGRESS"
   protocol-allowed = "tcp"
   ports-allowed = ["22" , "80"]
-  allowed-ip = ["35.235.240.0/20"]
+  allowed-ip = ["0.0.0.0/0"]
 }
 #-----------------------------------------------------------------
 #------- Create Subnets
@@ -28,6 +28,10 @@ module "restricted-subnet" {
   cidr-ip = "10.0.2.0/24"
   region-of-subnet = var.user-region
   vpc-link = module.my-vpc.vpc-link
+  first-secondary-ip-range-name = "k8s-pods"
+  first-secondary-ip-range-ip = "10.10.10.0/24"
+  second-secondary-ip-range-name = "k8s-services"
+  second-secondary-ip-range-ip = "10.20.10.0/24"
 }
 #-----------------------------------------------------------------
 #------- Create NATGATEWAY
@@ -40,7 +44,5 @@ module "natgateway" {
   #--------NAT Requires
   nat-name = "mangement-nat"
   allocate-ip-of-nat = "AUTO_ONLY"
-  subnets-ip-ranges-of-nat-to-work = "LIST_OF_SUBNETWORKS"
-  subnet-work-id = module.management-subnet.id-of-subnet
-  ip-ranges-inside-subnet-work = ["ALL_IP_RANGES"]
+  subnets-ip-ranges-of-nat-to-work = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }

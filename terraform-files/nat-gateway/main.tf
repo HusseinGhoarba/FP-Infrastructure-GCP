@@ -12,12 +12,5 @@ resource "google_compute_router_nat" "my-nat" {
   region                             = google_compute_router.nat-router.region
   nat_ip_allocate_option             = var.allocate-ip-of-nat
   source_subnetwork_ip_ranges_to_nat = var.subnets-ip-ranges-of-nat-to-work
-  subnetwork {
-    name                    = var.subnet-work-id
-    source_ip_ranges_to_nat = var.ip-ranges-inside-subnet-work
-  }
-  log_config {
-    enable = true
-    filter = "ERRORS_ONLY"
-  }
 }
+

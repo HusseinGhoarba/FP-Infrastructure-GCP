@@ -22,11 +22,3 @@ variable "allocate-ip-of-nat" {
 variable "subnets-ip-ranges-of-nat-to-work" {
   
 }
-
-variable "subnet-work-id" {
-  
-}
-
-variable "ip-ranges-inside-subnet-work" {
-  
-}

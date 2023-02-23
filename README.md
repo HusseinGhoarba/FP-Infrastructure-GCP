@@ -213,9 +213,149 @@ cat /var/jenkins_home/secrets/initialAdminPassword
 
 <img src="images/deploy-jenkins/15-add-password-and-start-with-server.png" width=400 >
 
-**10/5- then skip plugin installation and add your user-name and password then welcome to Jenkin**
+**10/5- then install suggested plugins and add your user-name and password then welcome to Jenkin**
 
 <img src="images/deploy-jenkins/16-Welcome-to-Jenkins-Server.png" width=400 >
+
+<img src="images/deploy-jenkins/17-welcome-to-jankoooz.png" width=400 >
+
+### --------------------------------------------------
+### 3- Deploy the Jenkins-Slave-Pod into the cluster using the private vm:
+
+**HINT: before applying the yaml files do the following steps:**
+
+> 1- execute the following command:
+
+```
+vi ./FP-Infrastructure-GCP/jenkins-slave/slave-deploy.yml 
+```
+and change line 25 the old content `<gcr.io/hussein-ghoraba/jenkins-slave>` the new content after adding your project-id `<gcr.io/<your-project-id>/jenkins-slave>`
+
+> 2- let's create the deployment files of the slave pod:
+```
+kubectl apply -f ./FP-Infrastructure-GCP/jenkins-slave -n jenkins
+```
+screenshot from the command:
+
+<img src="images/jk-slave/deploy-of-slave-pod/01-deploy-of-slave-pod.png" width=400 >
+
+> 3- make sure that the jenkins-slave-pod is running:
+```
+kubectl get po -n jenkins
+```
+screenshot from the command:
+
+<img src="images/jk-slave/deploy-of-slave-pod/02-make-sure-that-pod-is-running.png" width=400 >
+
+### --------------------------------------------------
+### 4- Configure the manage nodes inside the jenkins server to add the jenkins slave pod:
+
+> 1- Open Jenkins Server and go to `manage jenkins` then go to `Manage Credentials` and then click on `global`
+
+>> 1-1 Choose `+ Add Credentials` on the top left
+
+>> 1-2 in section of `Kind`
+```
+Choose: Username with Password
+```
+>>1-3 in section of `Scope`
+```
+Choose: Global (Jenkins, nodes, item, ....)
+```
+>>1-4 	in section of `Username` the same username inside the dockerfile which we built for the slave
+```
+jenkins
+```
+>>1-5 in section of `Password`
+```
+123456
+```
+>>1-6 in section of `ID` add the name which you will use it in jenkins
+```
+slave-user
+```
+>>1-7 Then click on `Create`
+
+<img src="images/jk-slave/conf/01-add-credentials.png" width=400 >
+
+> 2- Open Jenkins Server and go to `manage jenkins` then go to `manage nodes and clouds` and then click on `add new node`
+
+<img src="images/jk-slave/conf/02-AddNameOfTheNode.png" width=400 >
+ 
+> 3- Follow the next steps with the same name:
+
+>>3-1 in section of `Remote root directory`
+```
+/var/jenkins_home
+```
+>>3-2 in section of `Labels`
+```
+jenkins-slave
+```
+>>3-3 in section of `Launch method`
+```
+Choose: Launch Agent via SSH
+```
+>>3-4 in section of `Host` "add the name of the service of jenkins-slave-pod -- oly add the next name as it's the name of service used in the k8s files of slave-pod":
+```
+jenkins-slave-svc
+```
+>>3-5 in section of `Credentials`:
+```
+Choose: the created credentials which we created in section-1 "jenkins/******"
+```
+>>3-6 in section of `Host Key Verification Strategy`
+```
+Choose: Non verifying Vertification Strategy
+```
+>> any other un-mentioned section do-not do anything with it ... 
+
+>>3-7 Then click on `Save`
+
+<img src="images/jk-slave/conf/03-configuation-of-the-node.png" width=400 >
+
+<img src="images/jk-slave/conf/04-configuation-of-the-node.png" width=400 >
+
+> 4- Some configuration we will do in the opened terminal `-that have VM opened in SSH-` to do to complete the Launching of the new node:
+
+**HINT: If you closed the terminal do this command after changing the values <inside-this>:  `gcloud compute ssh --project=<your-project-id>  --zone=<your-added-preferred-zone> instance-management`**
+>>4-1 Get the name of the pod:
+```
+kubectl get po -n jenkins
+```
+screenshot from the command:
+
+<img src="images/jk-slave/conf/05-slave-pod-name.png" width=400 >
+
+>>4-2 Connect to the slave-pod:
+```
+kubectl exec --stdin --tty <pod-name> -n jenkins -- /bin/bash 
+```
+screenshot from the command:
+
+<img src="images/jk-slave/conf/06-exec-to-the-pod.png" width=400 >
+
+>>4-3 Do the following commands:
+- open ssh service
+```
+service ssh start
+```
+- change password of the jenkins user:
+```
+passwd jenkins
+```
+--> In Enter new UNIX password: `123456` "the same password we add in the credentials" and re-type it 
+- change the owner user and owner group of the docker.soc file "to be able to build images"
+```
+chown jenkins:jenkins /var/run/docker.soc
+```
+
+<img src="images/jk-slave/conf/07-configuration-inside-the-pod.png" width=400 >
+
+>>4-3 Go Back to the Jenkins Server as we were on the node `jenkins-slave-node` and go to `Status` then click on the button `Launch`
+
+<img src="images/jk-slave/conf/08-Successfully-Launched-The-Agent.png" width=400 >
+
 
 ### --------------------------------------------------
 ### Finally: 

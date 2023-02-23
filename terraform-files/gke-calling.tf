@@ -13,15 +13,13 @@ module "GKE-SA" {
 module "GKE-Cluster" {
   source = "./gke-cluster"
   #-----------------------create GKE Cluster
-  cluster-name = "python-cluster"
-  cluster-zone =var.user-zone
-  #-----------------------------------------
+  cluster-name             = "python-cluster"
+  cluster-zone             = var.user-zone
   remove-default-node-pool = true
-  initial-node-count       = 1
   vpc-id-for-cluster       = module.my-vpc.id-of-vpc
   subnet-id-for-cluster    = module.restricted-subnet.id-of-subnet
-  #-----------------------------------------
-  master-cidr-ip-block  = "10.0.1.0/24"
+  work-load                = "${var.user-project-id}.svc.id.goog"
+  manage-subnet-ip-range   = module.management-subnet.ip-range
   master-name-config    = "management-cidr"
   #-----------------------------------------
   #-----------------------create NodePool
@@ -29,6 +27,6 @@ module "GKE-Cluster" {
   location-of-node = var.user-zone
   count-of-node    = 1
   #----------------------------------------
-  machine-type-of-node = "e2-medium"
+  machine-type-of-node = "e2-standard-4"
   email-of-sa-for-node = module.GKE-SA.email
 }
