@@ -374,16 +374,16 @@ kubectl exec --stdin --tty <pod-name> -n jenkins -- /bin/bash
 ```
 >> 2-2 install gcloud inside the pod: "follow the next steps"
 ```
-export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
+echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 ```
 ```
-echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
 ```
 ```
-curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+apt-get update && apt-get install google-cloud-cli
 ```
 ```
-apt update && apt install -y google-cloud-sdk
+apt-get install google-cloud-sdk-gke-gcloud-auth-plugin
 ```
 
 >> 2-3 Switch to jenkins user and  follow the next steps to authenticate the gcloud within the user and then configure cluster with the user profile:
