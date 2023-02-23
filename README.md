@@ -358,55 +358,107 @@ chown jenkins:jenkins /var/run/docker.soc
 
 ### --------------------------------------------------
 ### 5- Finally we are in the final step in which we will create `pipeline` which will auto `Build&Deploy` the code inside the application repo:
-> 1- Add credentials od the DockerHub into Jenkins server : 06-create-credentials-of-dockerHub
+> 1- Add credentials od the DockerHub into Jenkins server : 
 
 >> 1-1 The same steps of creating credentials of jenkins-user but here you should add your username and password of dockerhub account:
+
 >>> go to `manage jenkins` - `manage credentials` - `global` then `+ Add new credentials` and choose `Username and password credentials` and fullfill the requires as i explained before 
 
-<img src="images/deploy-app/01-create-piepline.png" width=400 >
+<img src="images/deploy-app/00-create-credentials-with-dockerHub-account.png" width=400 >
 
-> 2- Configure the pod to deploy pods in the cluster:
+> 2- Configure the cluster inside the pod for deploying the new apps:
 
->> 2-1 go to the terminal in which the VM-Instance is opened and get into the terminal of the jenkins-slave-pod:
+>> 2-1 connect to the pod 
+```
+kubectl exec --stdin --tty <pod-name> -n jenkins -- /bin/bash 
+```
+>> 2-2 install gcloud inside the pod: "follow the next steps"
+```
+export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
+```
+```
+echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+```
+```
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+```
+```
+apt update && apt install -y google-cloud-sdk
+```
+
+>> 2-2 Switch to jenkins user and  follow the next steps to authenticate the gcloud within the user and then configure cluster with the user profile:
 ```
 su jenkins
 ```
->> 2-2 add this command 
+```
+gcloud auth login
+```
+then press `Y` and finish the authentication and get the code of vertification and then configure the project
+```
+gcloud config set project <PROJECT_ID>
+```
+configure the cluster within jenkins user
+```
+gcloud container clusters get-credentials python-cluster --zone <your-added-preferred-zone> --project <your-project-id>
+```
+get out of the jenkins user and you will be switched to the root user
+```
+exit
+```
+`"Optional"` Install envsubst in case you are versioning your image while building and you are using "BUILD_NUMBER" for this purpose
+```
+apt-get install gettext-base
+```
+get out of the slave-pod
+```
+exit
+```
+
+<img src="images/deploy-app/07-configure-the-python-cluster-to-user-jenkins-in-slave-pod" width=400 >
+
+>> 2-2 add this command 	
 ```
 gcloud container clusters get-credentials <your-cluster-name> --zone <your-entered-prefered-zone> --project <your-project-id>
 ```
 
-> 3- Create an Item "Pipeline" from the jenkins server as follow:
+> 3- Create namespace `dev` in which your deployment will be:
+>>3-1 on the opened terminal of the VM
+
+```
+kubectl create ns dev
+```
+
+> 4- Create an Item "Pipeline" from the jenkins server as follow:
 
 <img src="images/deploy-app/01-create-piepline.png" width=400 >
 
 <img src="images/deploy-app/02-create-piepline.png" width=400 >
 
->> 3-1- in section `Description` ------`"Optional"`
+>> 4-1- in section `Description` ------`"Optional"`
 ```
 A pipeline that will do the next jobs:
 - Build image from the code inside the remote repo (GitHub) 
-- Push the Image to the GCR
+- Push the Image to the DockerHub
 - Deploy the image into the cluster through deployment and service to access the application (from-kubernetes-yml-files)
 ```
->> 3-2- in section `Pipeline`
->>> 3-2-1- in section `Definition`:
+>> 4-2- in section `Pipeline`
+>>> 4-2-1- in section `Definition`:
 ```
 Choose: Pipeline script from SCM
 ```
->>> 3-2-2- in section `SCM` 
+>>> 4-2-2- in section `SCM` 
 ```
 Choose: Git
 ```
->>>> 3-2-2-1- in section `Repository URL`:
+>>>> 4-2-2-1- in section `Repository URL`:
 ```
 <Add link of your repository> -- for me i added this as this has the requirements of the project <https://github.com/HusseinGhoarba/FP-Application-GCP>
 ```
->>>> 3-2-2-1- in section `Branches to build`:
+>>>> 4-2-2-1- in section `Branches to build`:
 ```
 <add the name of the branch that has your application> -- in my case <./main>
 ```
->>> 3-2-3- in section `Script Path`
+>>> 4-2-3- in section `Script Path`
 ```
 <add the name of your script file> but it's common to use the name of the script file as "Jenkinsfile" and that what i use.
 ```
@@ -420,11 +472,42 @@ Choose: Git
 
 <img src="images/deploy-app/05-pipeline-configurations.png" width=400 >
 
+
+> 5- Build now your pipeline:
+
+>> 5-1 from the left tap inside the pipeline we created press on build-now
+
+<img src="images/deploy-app/08-build-now.png" width=400 >
+
+<img src="images/deploy-app/09-console-output-of-building.png" width=400 >
+
+<img src="images/deploy-app/10-console-output-of-building.png" width=400 >
+
+<img src="images/deploy-app/11-console-output-of-building.png" width=400 >
+
+>> 5-2 from the terminal of the VM-instance:
+```
+kubectl get po -n dev
+```
+```
+kubectl get svc -n dev
+```
+
+<img src="images/deploy-app/12-get-svc-and-po-of-new-app.png" width=400 >
+
+>> 5-3 get the ip address:
+
+<img src="images/deploy-app/13-get-the-ip-address-that-will-let-us-access-app.png" width=400 >
+
+>> 5-4 get access to the web-site
+
+<img src="images/deploy-app/14-access-the-static-web-site-app.png" width=400 >
+
 ### --------------------------------------------------
 ### Finally: 
-***I want to THANK YOU & If there is any problem don't hesitate to send to me***
+> **I want to THANK YOU & If there is any problem don't hesitate to send to me**
 ### --------------------------------------------------
 ### Project Contributers:
-|![Hussein Ghoraba](images/hussein.jpg)|
+|![Hussein Ghoraba](images/hussein-ghoraba.jpeg)|
 |:-----------------:|
 |[Hussein Ghoraba](https://github.com/HusseinGhoarba)|
