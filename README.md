@@ -42,7 +42,7 @@ https://cloud.google.com/container-registry/docs/advanced-authentication
 ```
 > 6- Terraform setup on you local machine
 ```
-https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli 
+https://developer.hashicorp.com/terraform/tutorials
 ```
 > 7- install git on your local machine
 ```
